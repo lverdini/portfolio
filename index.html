@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luciano Verdini | Portfolio & CV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        dark: '#050505',
+                        darker: '#000000',
+                        cyan: {
+                            400: '#00f3ff',
+                            500: '#00d1ff',
+                        },
+                        purple: {
+                            500: '#8a2be2',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #e5e5e5;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 243, 255, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(138, 43, 226, 0.05), transparent 25%);
+            background-attachment: fixed;
+        }
+
+        /* Glassmorphism & Neon */
+        .glass-panel {
+            background: rgba(20, 20, 25, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            grid-auto-rows: minmax(150px, auto);
+            gap: 1.5rem;
+            perspective: 1000px;
+        }
+
+        .bento-card {
+            --pointer-x: 50%;
+            --pointer-y: 50%;
+            --tilt-x: 0deg;
+            --tilt-y: 0deg;
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.18s ease-out, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background: radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(0, 243, 255, 0.2), transparent 34%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .bento-card:hover {
+            border-color: rgba(0, 243, 255, 0.75);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.18), inset 0 0 18px rgba(0, 243, 255, 0.08);
+        }
+
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        .bento-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .skills-card-main { grid-column: span 7; grid-row: span 2; }
+        .skills-card-tools { grid-column: span 5; grid-row: span 2; }
+        .project-card-featured { grid-column: span 6; grid-row: span 2; }
+        .project-card-standard { grid-column: span 3; grid-row: span 2; }
+
+        @media (max-width: 767px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+                grid-auto-rows: auto;
+            }
+
+            .skills-card-main,
+            .skills-card-tools,
+            .project-card-featured,
+            .project-card-standard {
+                grid-column: auto;
+                grid-row: auto;
+            }
+
+            .bento-card {
+                transform: none;
+            }
+        }
+
+        .neon-text {
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5), 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        .neon-border:hover {
+            border-color: #00f3ff;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3), inset 0 0 10px rgba(0, 243, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .bento-card.neon-border:hover {
+            transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+        }
+
+        /* Scroll Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Typing cursor */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.2em;
+            background-color: #00f3ff;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500 selection:text-darker overflow-x-hidden">
+
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-4 glass-panel border-b-0">
+        <div class="max-w-6xl mx-auto px-6 flex justify-between items-center">
+            <a href="#home" class="text-xl font-bold font-mono tracking-tighter text-white">
+                <span class="text-cyan-400">&lt;</span>LV<span class="text-cyan-400">/&gt;</span>
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 text-sm font-mono text-gray-400">
+                <a href="#about" class="hover:text-cyan-400 transition-colors">01. Sobre Mí</a>
+                <a href="#skills" class="hover:text-cyan-400 transition-colors">02. Habilidades</a>
+                <a href="#projects" class="hover:text-cyan-400 transition-colors">03. Proyectos</a>
+                <a href="#experience" class="hover:text-cyan-400 transition-colors">04. Experiencia</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-cyan-400 text-2xl focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full glass-panel border-t border-gray-800 flex-col py-4 px-6 space-y-4 md:hidden">
+            <a href="#about" class="block text-gray-300 hover:text-cyan-400 font-mono">01. Sobre Mí</a>
+            <a href="#skills" class="block text-gray-300 hover:text-cyan-400 font-mono">02. Habilidades</a>
+            <a href="#projects" class="block text-gray-300 hover:text-cyan-400 font-mono">03. Proyectos</a>
+            <a href="#experience" class="block text-gray-300 hover:text-cyan-400 font-mono">04. Experiencia</a>
+        </div>
+    </nav>
+
+    <section id="home" class="min-h-screen flex items-center justify-center pt-20 relative px-6">
+        <div class="max-w-4xl mx-auto w-full z-10">
+            <p class="font-mono text-cyan-400 mb-4 tracking-wide reveal">Hola, mi nombre es</p>
+            <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-2 tracking-tight reveal" style="transition-delay: 100ms;">
+                Luciano Verdini.
+            </h1>
+            <h2 class="text-3xl md:text-5xl font-bold text-gray-400 mb-6 reveal" style="transition-delay: 200ms;">
+                <span id="typewriter"></span><span class="cursor"></span>
+            </h2>
+            <p class="text-lg text-gray-400 max-w-2xl mb-10 leading-relaxed reveal" style="transition-delay: 300ms;">
+                Estudiante de Tecnicatura Universitaria en Desarrollo de Software con enfoque en programación web y desarrollo de apps. 
+                Poseo una sólida base en lógica de programación y soy capaz de aprender rápidamente. Buscando mi primera oportunidad profesional en IT para aplicar mis conocimientos.
+            </p>
+            
+            <div class="flex flex-wrap gap-4 reveal" style="transition-delay: 400ms;">
+                <a href="#contact" class="px-6 py-3 border border-cyan-400 text-cyan-400 font-mono rounded hover:bg-cyan-400/10 transition-all duration-300 flex items-center gap-2">
+                    <i class="fa-regular fa-paper-plane"></i> Contáctame
+                </a>
+                <a href="https://github.com/lverdini" target="_blank" rel="noopener noreferrer" class="px-6 py-3 border border-gray-600 text-gray-300 font-mono rounded hover:border-white hover:text-white transition-all duration-300 flex items-center gap-2">
+                    <i class="fa-brands fa-github"></i> GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/luciano-verdini-a3b3133a2/" target="_blank" rel="noopener noreferrer" class="px-6 py-3 border border-gray-600 text-gray-300 font-mono rounded hover:border-white hover:text-white transition-all duration-300 flex items-center gap-2">
+                    <i class="fa-brands fa-linkedin-in"></i> LinkedIn
+                </a>
+            </div>
+        </div>
+        
+        <!-- Decorative elements -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-gray-500">
+            <a href="#about"><i class="fa-solid fa-chevron-down text-2xl hover:text-cyan-400 transition-colors"></i></a>
+        </div>
+    </section>
+
+    <section id="about" class="py-24 px-6 max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-12 reveal">
+            <h2 class="text-3xl font-bold text-white"><span class="text-cyan-400 font-mono text-xl mr-2">01.</span> Sobre Mí</h2>
+            <div class="h-[1px] bg-gray-700 flex-grow"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 reveal">
+            <div class="col-span-2 text-gray-400 space-y-4 leading-relaxed">
+                <p>
+                    Resido en la Provincia de Buenos Aires y actualmente me encuentro formándome profesionalmente en la <span class="text-cyan-400">UADE</span>. Me apasiona la resolución de problemas y la creación de soluciones digitales eficientes.
+                </p>
+                <p>
+                    Además de mi formación académica, combino mis estudios con experiencia laboral en el sector logístico, lo que me ha otorgado habilidades en gestión del tiempo, trabajo bajo presión y atención al detalle.
+                </p>
+                
+                <div class="mt-8">
+                    <h3 class="text-white font-semibold mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-language text-cyan-400"></i> Idiomas
+                    </h3>
+                    <ul class="font-mono text-sm space-y-2">
+                        <li><span class="text-cyan-400">▹</span> Inglés - Nivel Intermedio</li>
+                        <li><span class="text-cyan-400">▹</span> Portugués - Nivel Básico</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Contact Card -->
+            <div id="contact" class="glass-panel p-6 rounded-lg neon-border">
+                <h3 class="text-xl font-bold text-white mb-4">Información de Contacto</h3>
+                <ul class="space-y-4 font-mono text-sm">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-location-dot mt-1 text-cyan-400"></i>
+                        <span>Provincia de Buenos Aires,<br>Argentina</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i class="fa-solid fa-phone text-cyan-400"></i>
+                        <span>(54) 1162275947</span>
+                    </li>
+                    <li class="flex items-center gap-3 overflow-hidden">
+                        <i class="fa-solid fa-envelope text-cyan-400"></i>
+                        <a href="mailto:verdiniluciano597@gmail.com" class="hover:text-cyan-400 transition-colors truncate">verdiniluciano597@gmail.com</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="py-24 px-6 max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 mb-12 reveal">
+            <h2 class="text-3xl font-bold text-white"><span class="text-cyan-400 font-mono text-xl mr-2">02.</span> Habilidades Técnicas</h2>
+            <div class="h-[1px] bg-gray-700 flex-grow"></div>
+        </div>
+
+        <div class="bento-grid reveal">
+            <!-- Languages -->
+            <div class="glass-panel bento-card skills-card-main p-6 rounded-lg">
+                <h3 class="text-lg font-bold text-white mb-6 border-b border-gray-700 pb-2">Lenguajes & Web</h3>
+                <div class="flex flex-wrap gap-3">
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-cyan-400 transition-colors"><i class="fa-brands fa-python text-yellow-400 mr-2"></i>Python</span>
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-cyan-400 transition-colors"><i class="fa-brands fa-java text-red-500 mr-2"></i>Java</span>
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-cyan-400 transition-colors"><i class="fa-brands fa-js text-yellow-300 mr-2"></i>JavaScript</span>
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-cyan-400 transition-colors"><i class="fa-brands fa-html5 text-orange-500 mr-2"></i>HTML5</span>
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-cyan-400 transition-colors"><i class="fa-brands fa-css3-alt text-blue-500 mr-2"></i>CSS3</span>
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-cyan-400 transition-colors"><i class="fa-solid fa-database text-gray-400 mr-2"></i>SQL</span>
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-cyan-400 transition-colors"><i class="fa-solid fa-leaf text-green-500 mr-2"></i>NoSQL</span>
+                </div>
+            </div>
+
+            <!-- Frameworks & Tools -->
+            <div class="glass-panel bento-card skills-card-tools p-6 rounded-lg">
+                <h3 class="text-lg font-bold text-white mb-6 border-b border-gray-700 pb-2">Frameworks & Herramientas</h3>
+                <div class="flex flex-wrap gap-3">
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-purple-500 transition-colors"><i class="fa-brands fa-react text-cyan-400 mr-2"></i>React Native</span>
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-purple-500 transition-colors"><i class="fa-brands fa-git-alt text-orange-600 mr-2"></i>GIT</span>
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-purple-500 transition-colors"><i class="fa-solid fa-code text-blue-400 mr-2"></i>VS Code</span>
+                    <span class="px-4 py-2 bg-gray-800/50 rounded text-sm font-mono border border-gray-700 hover:border-purple-500 transition-colors"><i class="fa-brands fa-android text-green-400 mr-2"></i>Android Studio</span>
+                </div>
+                
+                <h3 class="text-lg font-bold text-white mt-8 mb-4 border-b border-gray-700 pb-2">Conceptos Clave</h3>
+                <ul class="text-sm text-gray-400 font-mono space-y-2">
+                    <li><span class="text-cyan-400">▹</span> Lógica de Programación</li>
+                    <li><span class="text-cyan-400">▹</span> Bases de Datos Relacionales</li>
+                    <li><span class="text-cyan-400">▹</span> Resolución de Problemas</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="py-24 px-6 max-w-5xl mx-auto">
+        <div class="flex items-center gap-4 mb-12 reveal">
+            <h2 class="text-3xl font-bold text-white"><span class="text-cyan-400 font-mono text-xl mr-2">03.</span> Proyectos Destacados</h2>
+            <div class="h-[1px] bg-gray-700 flex-grow"></div>
+        </div>
+
+        <div class="bento-grid">
+            <!-- Project 1 -->
+            <div class="glass-panel bento-card project-card-featured p-6 rounded-lg flex flex-col h-full neon-border group reveal">
+                <div class="flex justify-between items-start mb-4">
+                    <i class="fa-solid fa-gavel text-3xl text-cyan-400 group-hover:text-white transition-colors"></i>
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">SubastUP</h3>
+                <p class="text-sm text-gray-400 mb-6 flex-grow">
+                    Proyecto Universitario. Aplicación móvil de subastas en línea. Permite ver subastas mediante un calendario de eventos. Los usuarios autenticados pueden pujar, acceder a chat, búsquedas y gestión de perfil.
+                </p>
+                <div class="flex flex-wrap gap-2 text-xs font-mono text-cyan-500">
+                    <span>React Native</span>
+                    <span>Expo</span>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="glass-panel bento-card project-card-standard p-6 rounded-lg flex flex-col h-full neon-border group reveal" style="transition-delay: 100ms;">
+                <div class="flex justify-between items-start mb-4">
+                    <i class="fa-solid fa-robot text-3xl text-cyan-400 group-hover:text-white transition-colors"></i>
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">Script de Automatización</h3>
+                <p class="text-sm text-gray-400 mb-6 flex-grow">
+                    Script diseñado para la automatización del procesamiento de archivos de texto y organización de grandes volúmenes de datos de manera eficiente.
+                </p>
+                <div class="flex flex-wrap gap-2 text-xs font-mono text-cyan-500">
+                    <span>Python</span>
+                    <span>Data Processing</span>
+                </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="glass-panel bento-card project-card-standard p-6 rounded-lg flex flex-col h-full neon-border group reveal" style="transition-delay: 200ms;">
+                <div class="flex justify-between items-start mb-4">
+                    <i class="fa-solid fa-gamepad text-3xl text-cyan-400 group-hover:text-white transition-colors"></i>
+                    <a href="#" class="text-gray-400 hover:text-cyan-400 transition-colors"><i class="fa-brands fa-github text-xl"></i></a>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">Desafío de Reacción</h3>
+                <p class="text-sm text-gray-400 mb-6 flex-grow">
+                    Proyecto Universitario. App móvil de juegos matemáticos con diferentes modos y niveles, enfocada en respuestas de alta velocidad en cortos períodos de tiempo.
+                </p>
+                <div class="flex flex-wrap gap-2 text-xs font-mono text-cyan-500">
+                    <span>Android Studio</span>
+                    <span>Java</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" class="py-24 px-6 max-w-3xl mx-auto">
+        <div class="flex items-center gap-4 mb-12 reveal">
+            <h2 class="text-3xl font-bold text-white"><span class="text-cyan-400 font-mono text-xl mr-2">04.</span> Trayectoria</h2>
+            <div class="h-[1px] bg-gray-700 flex-grow"></div>
+        </div>
+
+        <!-- Experience -->
+        <h3 class="text-2xl font-bold text-white mb-8 reveal"><i class="fa-solid fa-briefcase text-cyan-400 mr-3"></i>Experiencia Laboral</h3>
+        <div class="relative border-l border-gray-700 ml-3 md:ml-4 mb-16 reveal">
+            <div class="mb-10 ml-8 relative">
+                <div class="absolute -left-[41px] top-1 h-5 w-5 rounded-full border-2 border-cyan-400 bg-dark"></div>
+                <h4 class="text-xl font-bold text-white">Operario / Preparación de Pedidos</h4>
+                <p class="text-cyan-400 font-mono text-sm mb-2">Verplast, González Catan | Marzo 2022 - Presente</p>
+                <p class="text-gray-400 mb-2">Asisto a este puesto de trabajo mientras realizo mi carrera universitaria.</p>
+                <ul class="text-sm text-gray-400 space-y-2 list-disc list-inside">
+                    <li>Ejecución de procesos logísticos con atención al detalle y precisión en el despacho de mercadería.</li>
+                    <li>Uso de sistemas internos para el control de inventario y gestión de pedidos.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Education -->
+        <h3 class="text-2xl font-bold text-white mb-8 reveal"><i class="fa-solid fa-graduation-cap text-cyan-400 mr-3"></i>Educación</h3>
+        <div class="relative border-l border-gray-700 ml-3 md:ml-4 reveal">
+            
+            <!-- Edu 1 -->
+            <div class="mb-10 ml-8 relative">
+                <div class="absolute -left-[41px] top-1 h-5 w-5 rounded-full border-2 border-purple-500 bg-dark"></div>
+                <h4 class="text-xl font-bold text-white">Tecnicatura en Desarrollo de Software</h4>
+                <p class="text-purple-400 font-mono text-sm mb-2">UADE, CABA | Marzo 2024 - Presente</p>
+                <p class="text-gray-400">Tecnicatura universitaria en proceso, enfocada en la lógica de programación y desarrollo práctico.</p>
+            </div>
+
+            <!-- Edu 2 -->
+            <div class="mb-4 ml-8 relative">
+                <div class="absolute -left-[41px] top-1 h-5 w-5 rounded-full border-2 border-gray-500 bg-dark"></div>
+                <h4 class="text-xl font-bold text-white">Bachiller en Ciencias Sociales</h4>
+                <p class="text-gray-400 font-mono text-sm mb-2">Instituto Jose Leon Larre, Buenos Aires | 2016 - 2021</p>
+                <p class="text-gray-400">Secundario completo.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="border-t border-gray-800 py-8 text-center text-gray-500 font-mono text-sm">
+        <div class="max-w-4xl mx-auto px-6">
+            <p class="mb-2">Diseñado y codificado con <span class="text-cyan-400">&lt;3</span></p>
+            <p>&copy; 2024 Luciano Verdini. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Navbar Styling on Scroll ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-lg');
+                navbar.classList.replace('py-4', 'py-2');
+                navbar.style.backgroundColor = 'rgba(10, 10, 15, 0.9)';
+            } else {
+                navbar.classList.remove('shadow-lg');
+                navbar.classList.replace('py-2', 'py-4');
+                navbar.style.backgroundColor = 'transparent';
+            }
+        });
+
+        // --- Mobile Menu Toggle ---
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('flex');
+        });
+
+        // Hide mobile menu on click
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+            });
+        });
+
+        // --- Typing Effect ---
+        const typeTarget = document.getElementById('typewriter');
+        const textToType = "Desarrollador Web & App.";
+        let index = 0;
+
+        function typeWriter() {
+            if (index < textToType.length) {
+                typeTarget.innerHTML += textToType.charAt(index);
+                index++;
+                setTimeout(typeWriter, 100);
+            }
+        }
+        
+        // Start typing effect after a small delay
+        setTimeout(typeWriter, 800);
+
+        // --- Bento Card Tilt & Cursor Glow ---
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('pointermove', event => {
+                if (window.matchMedia('(max-width: 767px)').matches) return;
+
+                const bounds = card.getBoundingClientRect();
+                const x = event.clientX - bounds.left;
+                const y = event.clientY - bounds.top;
+                const rotateX = ((y / bounds.height) - 0.5) * -4;
+                const rotateY = ((x / bounds.width) - 0.5) * 4;
+
+                card.style.setProperty('--pointer-x', `${x}px`);
+                card.style.setProperty('--pointer-y', `${y}px`);
+                card.style.setProperty('--tilt-x', `${rotateX}deg`);
+                card.style.setProperty('--tilt-y', `${rotateY}deg`);
+            });
+
+            card.addEventListener('pointerleave', () => {
+                card.style.setProperty('--tilt-x', '0deg');
+                card.style.setProperty('--tilt-y', '0deg');
+            });
+        });
+
+        // --- Scroll Reveal Animations (Intersection Observer) ---
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        };
+
+        const revealOptions = {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealObserver = new IntersectionObserver(revealCallback, revealOptions);
+
+        revealElements.forEach(el => {
+            revealObserver.observe(el);
+        });
+    </script>
+</body>
+</html>
